@@ -4,18 +4,18 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import base64
 
-def derive_fernet_key(user_id, master_password, salt):
+def derive_fernet_key_b64(user_id, master_password, salt):
     """
-    Deriva una clave Fernet a partir de user_id, master_password y salt.
+    Derives a base64 Fernet key from the user ID, master password, and salt.
+    This key is saved in session and used in views to encrypt/decrypt.
     """
+    salt_bytes = base64.b64decode(salt)
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=base64.b64decode(salt),
+        salt=salt_bytes,
         iterations=100_000,
         backend=default_backend()
     )
-    key = base64.urlsafe_b64encode(
-        kdf.derive((str(user_id) + master_password).encode())
-    )
-    return Fernet(key)
+    key = kdf.derive((str(user_id) + master_password).encode())
+    return base64.urlsafe_b64encode(key).decode()

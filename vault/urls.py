@@ -5,8 +5,10 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', views.home, name='home'),
     path('add/', views.add_password, name='add'),
+    path('edit/<int:id>/', views.edit_password, name='edit'),
     path('delete/<int:id>/', views.delete_password, name='delete'),
     path('login/', auth_views.LoginView.as_view(template_name='vault/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('register/', views.register, name='register'),
+    path('master-password/', views.request_master_password, name='request_master_password'),
 ]
